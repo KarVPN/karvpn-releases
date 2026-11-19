@@ -16,13 +16,18 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://karvpn.github.io/karvpn-releases/og.png">
-<link rel="icon" type="image/png" href="icon.png">
+<link rel="icon" href="favicon.ico?v=2" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2">
 <style>
 :root{--fg:#18181b;--muted:#71717a;--line:#e5e5e7;--track:#f0f0f2;--bg:#f6f6f7;--card:#fff}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;color:var(--fg);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
 .wrap{max-width:520px;margin:0 auto;padding:20px 16px 48px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px}
+.brand img{width:26px;height:26px;border-radius:6px;display:block}
 .top h1{font-size:1.15rem;margin:0;letter-spacing:-.01em}
 .top .ctrls{display:flex;gap:8px;align-items:center}
 .seg{display:inline-flex;background:var(--track);border-radius:9px;padding:2px}
@@ -30,8 +35,9 @@ body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-
 .seg button.on{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .ghost{border:0;background:var(--track);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--muted)}
 .ghost:hover{color:var(--fg)}
-.pills{display:flex;gap:8px;margin:28px 0 0;flex-wrap:wrap}
-.pills button{flex:1;min-width:100px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--card);padding:9px 6px;border-radius:10px;cursor:pointer;font-size:.85rem;color:var(--muted)}
+.pills{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:28px 0 0}
+@media(max-width:460px){.pills{grid-template-columns:repeat(2,1fr)}}
+.pills button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--card);padding:9px 6px;border-radius:10px;cursor:pointer;font-size:.85rem;color:var(--muted)}
 .pills button svg{width:18px;height:18px;flex-shrink:0}
 .pills button.on{color:var(--fg);border-color:var(--fg)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 24px 22px;margin-top:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
@@ -70,7 +76,7 @@ footer a{color:var(--muted);font-size:.82rem}
 <body>
 <div class="wrap">
 <header class="top">
-  <h1>KarVPN</h1>
+  <div class="brand"><img src="favicon-32x32.png?v=2" width="26" height="26" alt=""><h1>KarVPN</h1></div>
   <div class="ctrls">
     <div class="seg" id="seg">
       <button data-ch="stable"></button>

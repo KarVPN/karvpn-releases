@@ -55,7 +55,7 @@ const STR = {
 };
 
 const user = detectOS();
-const state = { channel: 'stable', lang: 'ru', os: user.os || 'linux', tab: 'deb', docs: {} };
+const state = { channel: 'stable', lang: 'ru', os: user.os || 'linux', tab: 'deb', detailsOpen: false, docs: {} };
 let loadToken = 0;
 const t = k => STR[state.lang][k];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -126,8 +126,10 @@ function render() {
   const doc = res.value;
   const b = doc.body;
   const action = buildAction(p, b);
-  const details = buildDetails(doc, b);
+  const details = buildDetails(p, doc, b);
   document.getElementById('view').innerHTML = '<div class="card">' + hero + action + details + '</div>';
+  const det = document.querySelector('#view details');
+  if (det) det.addEventListener('toggle', () => { state.detailsOpen = det.open; });
   document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => {
     state.tab = btn.dataset.tab;
     render();
@@ -170,14 +172,22 @@ function buildAction(p, b) {
     tabs + cmdBlock('sudo pacman -U ./' + archFn);
 }
 
-function buildDetails(doc, b) {
+function buildDetails(p, doc, b) {
   const date = (doc.issued_at || '').slice(0, 10);
-  const size = b.size ? (b.size / 1048576).toFixed(1) + ' MB' : '';
+  const isDocAsset = p !== 'linux' || state.tab === 'deb';
+  const size = isDocAsset && b.size ? (b.size / 1048576).toFixed(1) + ' MB' : '';
   const row = (k, v) => v ? '<div class="kv"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>' : '';
-  const sha = b.sha256
-    ? '<div class="kv"><span class="k">' + t('sha') + '</span><span class="v sha"><code>' + esc(b.sha256) + '</code><button class="copy" data-copy="' + esc(b.sha256) + '" title="' + t('copyTitle') + '">' + COPY_ICON + '</button></span></div>'
-    : '';
-  return '<details><summary>' + t('details') + ' ' + CHEVRON + '</summary>' +
+  let sha = '';
+  if (isDocAsset && b.sha256) {
+    sha = '<div class="kv"><span class="k">' + t('sha') + '</span><span class="v sha"><code>' + esc(b.sha256) + '</code><button class="copy" data-copy="' + esc(b.sha256) + '" title="' + t('copyTitle') + '">' + COPY_ICON + '</button></span></div>';
+  } else if (p === 'linux' && state.tab === 'rpm') {
+    const fn = 'karvpn-' + b.version + '-1.x86_64.rpm.sha256';
+    sha = row(t('sha'), '<a href="' + esc(dlUrl(b.version, fn)) + '">' + esc(fn) + '</a>');
+  } else if (p === 'linux' && state.tab === 'arch' && state.channel === 'beta') {
+    const fn = 'karvpn-' + String(b.version).replace(/-/g, '_') + '-1-x86_64.pkg.tar.zst.sha256';
+    sha = row(t('sha'), '<a href="' + esc(dlUrl(b.version, fn)) + '">' + esc(fn) + '</a>');
+  }
+  return '<details' + (state.detailsOpen ? ' open' : '') + '><summary>' + t('details') + ' ' + CHEVRON + '</summary>' +
     row(t('version'), esc(b.version)) +
     row(t('build'), esc(String(b.build))) +
     row(t('date'), esc(date)) +
